@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="ModelPlatform:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="ModelPlatform-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="ModelPlatform:war exploded" />
+    </root>
+  </artifact>
+</component>

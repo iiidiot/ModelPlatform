@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - loaders - OBJ loader</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				color: #000;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+
+				background-color: #000;
+				margin: 0px;
+				overflow: hidden;
+			}
+
+			#info {
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+			}
+
+			a {
+
+				color: #f00;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="info">
+		<a href="http://threejs.org" target="_blank">three.js</a> - OBJLoader
+		</div>
+
+		<script src="js/three.min.js"></script>
+		<script src="js/OBJLoader.js"></script>
+		<script src="js/OrbitControls.js"></script>
+
+		<script>
+
+			var container;
+
+			var camera, scene, renderer, controls;
+
+			var uniforms;
+
+			var mouseX = 0, mouseY = 0;
+
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+
+			var fov = 40;
+			var near = 1;
+			var far = 200;
+
+            var modelUrl = window.location.search.substr(1);
+            var textureUrl = modelUrl.split(".")[0]+".png";
+
+			init();
+			animate();
+
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+
+				camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, near, far );
+				camera.fov = fov;
+				camera.position.set( 0, -2, 2 );
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setClearColor( 0xffffff );
+				container.appendChild( renderer.domElement );
+
+
+				controls = new THREE.OrbitControls( camera );
+				controls.target.set( 0, 0, 0 );
+				/*controls = new THREE.OrbitControls( camera, renderer.domElement );
+				controls.enablePan = false;
+				controls.minDistance = 1.0;
+				controls.maxDistance = 1000.0;
+				controls.maxPolarAngle = Math.PI * 0.495;
+				controls.target.set( 0, 10, 0 );*/
+
+
+				// scene
+
+				scene = new THREE.Scene();
+
+				uniforms = {
+					time:       { value: 1.0 },
+					resolution: { value: new THREE.Vector2() }
+				};
+
+				var light = new THREE.DirectionalLight( 0xffffff, 1 );
+				light.position.set( 0, -4, -4 ).normalize();
+				scene.add( light );
+
+				var light2 = new THREE.DirectionalLight( 0xffffff, 1);
+				light2.position.set( 0, -4, 4).normalize();
+				scene.add( light2 );
+
+				var light3 = new THREE.DirectionalLight( 0xffffff, 1);
+				light3.position.set( 0, 4, 4).normalize();
+				scene.add( light3 );
+
+				var light4 = new THREE.DirectionalLight( 0xffffff, 1);
+				light4.position.set( 0, 4, -4).normalize();
+				scene.add( light4 );
+
+				/*var light2 = new THREE.PointLight( 0xffffff, 1, 100);
+				light2.position.set( 0, -4, 4);
+				scene.add( light2 );
+
+				var light = new THREE.PointLight( 0xffffff, 1, 100);
+				light.position.set( 0, -4, -4);
+				scene.add( light );*/
+
+				// texture
+
+				var manager = new THREE.LoadingManager();
+				manager.onProgress = function ( item, loaded, total ) {
+
+					console.log( item, loaded, total );
+
+				};
+
+				var texture = new THREE.Texture();
+
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+
+				var onError = function ( xhr ) {
+				};
+
+
+				var loader = new THREE.ImageLoader( manager );
+				loader.load( textureUrl, function ( image ) {
+
+					texture.image = image;
+					texture.needsUpdate = true;
+
+				} );
+
+				// model
+
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( modelUrl, function ( object ) {
+
+					object.traverse( function ( child ) {
+
+						if ( child instanceof THREE.Mesh ) {
+
+							/*var material = new THREE.ShaderMaterial( {
+
+							uniforms: uniforms,
+							vertexShader: document.getElementById( 'vertexShader' ).textContent,
+							fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+
+							} );*/
+
+							child.material.map = texture;
+
+						}
+
+					} );
+
+					object.position.y = 0;
+					scene.add( object );
+
+				}, onProgress, onError );
+
+				//
+
+				
+
+				//document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				//document.addEventListener( 'mousewheel', mousewheel, false );
+				
+				//
+
+				//window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+
+			/*function mousewheel(e) {  
+                e.preventDefault();  
+                //e.stopPropagation();  
+                if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件  
+                    if (e.wheelDelta > 0) { //当滑轮向上滚动时  
+                        fov -= (near < fov ? 1 : 0);  
+                    }  
+                    if (e.wheelDelta < 0) { //当滑轮向下滚动时  
+                        fov += (fov < far ? 1 : 0);  
+                    }  
+                } else if (e.detail) {  //Firefox滑轮事件  
+                    if (e.detail > 0) { //当滑轮向上滚动时  
+                        fov -= 1;  
+                    }  
+                    if (e.detail < 0) { //当滑轮向下滚动时  
+                        fov += 1;  
+                    }  
+                }  
+                camera.fov = fov;  
+                camera.updateProjectionMatrix();  
+                renderer.render(scene, camera);  
+                //updateinfo();  
+            }  */
+
+			function onWindowResize() {
+
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			/*function onDocumentMouseMove( event ) {
+
+				mouseX = ( event.clientX - windowHalfX ) / 2;
+				mouseY = ( event.clientY - windowHalfY ) / 2;
+
+			}*/
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+				render();
+
+			}
+
+			function render() {
+
+				//camera.position.x += ( mouseX - camera.position.x ) * .05;
+				//camera.position.y += ( - mouseY - camera.position.y ) * .05;
+
+				camera.lookAt( scene.position );
+				controls.update();
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>

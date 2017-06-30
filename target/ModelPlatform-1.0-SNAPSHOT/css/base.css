@@ -1,0 +1,17 @@
+.m-header, table, table caption, th, .my-form{
+    text-align: center;
+}
+
+.info {
+    text-align: center;
+    margin: 40px;
+    padding-bottom: 40px;
+}
+
+.my-page {
+    margin-bottom: 30px;
+}
+
+.my-form label {
+    font-size: 20px;
+}

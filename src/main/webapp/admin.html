@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>3D模型分享云平台后台</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/base.css">
+</head>
+
+<body>
+
+<div class="m-header">
+    <h1>3D模型分享云平台</h1>
+</div>
+<hr>
+<div class="container" id="mainPage">
+    <div class="row">
+        <div class="col-xs-3"></div>
+        <div class="col-xs-6">
+            <form class="my-form">
+                <div class="form-group">
+                    <label for="adminName">管 理 员 账 号</label>
+                    <input type="text" class="form-control" id="adminName">
+                </div>
+                <div class="form-group">
+                    <label for="password">密 码</label>
+                    <input type="password" class="form-control" id="password">
+                </div>
+                <button class="btn btn-default" onclick="loginOnClick()">登 录</button>
+            </form>
+        </div>
+        <div class="col-xs-3"></div>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+<script type="text/javascript" src="js/adminPage.js"></script>
+</html>
